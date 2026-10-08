@@ -83,7 +83,7 @@ const uniq=a=>[...new Set(a)].sort();
 const fill=(el,arr,all)=>{el.innerHTML=`<option value="">${all}</option>`+arr.join("")};
 const cities=[...new Set(S.map(s=>s.city))];
 const c7=TOP7.filter(c=>cities.includes(c)),rest=uniq(cities.filter(c=>!TOP7.includes(c)));
-fill($("c"),[...c7.map(c=>`<option>${c}</option>`),`<option disabled>──────</option>`,...rest.map(c=>`<option>${c}</option>`)],"全部（北北桃竹中南高在前）");
+fill($("c"),[...c7.map(c=>`<option>${c}</option>`),`<option disabled>──────</option>`,...rest.map(c=>`<option>${c}</option>`)],"全部");
 fill($("g"),uniq(S.flatMap(s=>s.groups)).map(x=>`<option>${x}</option>`),"全台");
 const upDist=()=>fill($("d"),uniq(S.filter(s=>!$("c").value||s.city==$("c").value).map(s=>s.district).filter(Boolean)).map(x=>`<option>${x}</option>`),"全部");
 upDist();
