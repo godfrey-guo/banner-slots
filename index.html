@@ -156,7 +156,12 @@ $("dates").innerHTML=`<div><small>今天</small><b>${fd(today)}</b></div><div cl
 if(M.demo)$("demo").hidden=false;
 // 說明
 const E=M.excluded||{},un=[...new Set(Object.keys(M.unlimited_names||{}))];
-$("excb").innerHTML=`<ul>
+$("excb").innerHTML=`<b>售賣規則</b><ul>
+<li>排期：每週一快照，不計快照當週加緩衝兩週，從第三週後的週一起算四週（本次 ${fd(w0)} ～ ${fd(w1)}）。</li>
+<li>銷售率＝觀察期已簽約輪次天數 ÷ 可售輪次天數，預設列出有人賣且 ≤40% 的版位。</li>
+<li>對象：流失客戶、久未合作客戶；合作中或已有未來簽約者不報。</li>
+<li>折扣：牌價 5.5～6 折，主管確認後才算核准價。</li></ul>
+<b>資料說明與排除</b><ul>
 <li>僅依<b>已簽約</b>資料計算；報價單、預留、鎖檔尚未納入，「可售」皆為候選空檔，報價前請以 DOS 最新庫存確認。</li>
 <li>牌價以價目表為準；價目表查無者暫用 DOS 牌價，標「DOS」。</li>
 <li>已排除　已停售版位 <b>${E["已停售(sale_status=0)"]||0}</b> 個（591 歷年累計）</li>
