@@ -51,6 +51,7 @@ input[type=checkbox]{min-width:0;width:18px;height:18px;accent-color:var(--ink);
 .sum{margin-top:10px;color:var(--mut)}.sum b{color:var(--ink);font-weight:500}.tot{font-size:var(--lg);font-weight:500;color:var(--ink);border-bottom:3px solid var(--lime)}
 .x{cursor:pointer;color:var(--mut)}
 .demo{background:var(--lime);color:var(--ink);font-size:var(--xs);text-align:center;padding:4px 10px;letter-spacing:1px}
+.demo.stale{background:var(--warn);color:#fff}
 .nav{display:flex;gap:26px;margin-top:18px}.nav a{color:#a9c0c0;cursor:pointer;padding-bottom:4px;letter-spacing:2px;border-bottom:3px solid transparent}.nav a.on{color:#fff;border-bottom-color:var(--lime)}
 .sel-head{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin:16px 0 10px}
 .sel-head div{padding:14px 20px 12px 0}.sel-head div+div{padding-left:24px;border-left:1px solid var(--line)}
@@ -67,6 +68,7 @@ input[type=checkbox]{min-width:0;width:18px;height:18px;accent-color:var(--ink);
 @media(max-width:760px){.in{padding-inline:16px}.dates{grid-template-columns:1fr}.dates div,.dates div+div{padding:12px 0 4px;border-left:0}.dates div+div{border-top:1px solid rgba(255,255,255,.22)}.tray{padding-inline:16px}.dates b{white-space:normal}}
 </style></head><body>
 <div class="demo" id="demo" hidden>範例資料：數字皆為虛構，僅供測試分享流程</div>
+<div class="demo stale" id="stale" hidden></div>
 <div class="f-head"><div class="in"><h1>591 閒置版位</h1>
 <div class="dates" id="dates"></div>
 <details id="exc"><summary>說明與排除的版位 ＋</summary><div id="excb"></div></details></div></div>
@@ -165,7 +167,12 @@ $("c").onchange=()=>{upDist();draw()};["g","d","run","q"].forEach(i=>$(i).oninpu
 draw();tray();
 // 日期
 const WD="日一二三四五六",fd=d=>`${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）`,pd=x=>new Date(x+"T00:00:00");
-const today=new Date(),sn=pd(M.snapshot),w0=pd(M.w0),w1=pd(M.w1),ex1=new Date(w0);ex1.setDate(ex1.getDate()-1);const ex0=new Date(w0);ex0.setDate(ex0.getDate()-14);
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+// 依「今天」推算：本週一起兩週＝開賣期（不計入），第三週週一起四週＝走期
+const today=new Date();today.setHours(0,0,0,0);
+const mon=addD(today,-((today.getDay()+6)%7)),ex0=mon,ex1=addD(mon,13),w0=addD(mon,14),w1=addD(mon,41);
+const sn=pd(M.snapshot),dw0=pd(M.w0),dw1=pd(M.w1);
+if(dw0.getTime()!==w0.getTime()){$("stale").hidden=false;$("stale").textContent=`⚠ 版位資料仍是 ${fd(sn)} 的快照，空檔與銷售率對應 ${fd(dw0)} ～ ${fd(dw1)}，尚未更新到本期（${fd(w0)} ～ ${fd(w1)}）；報價前請以 DOS 最新庫存確認，或重跑資料`}
 $("dates").innerHTML=`<div><small>今天</small><b>${fd(today)}</b></div><div class="on"><small>排期　兩週後起算四週・共 28 天</small><b>${fd(w0)} ～ ${fd(w1)}</b></div><div><small>不計入　本週起兩週</small><b>${fd(ex0)} ～ ${fd(ex1)}</b></div>`;
 if(M.demo)$("demo").hidden=false;
 // 說明
@@ -185,7 +192,6 @@ $("excb").innerHTML=`<b>售賣規則</b><ul>
 <li>你自己隱藏的版位可在列表上方「顯示已隱藏」還原。</li></ul>`;
 
 // ===== 選定日期與複製 =====
-const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const oS=addD(w0,-14),oE=addD(w0,-1),nextD=addD(w1,1);
 const cOrder={台北市:0,新北市:1,桃園市:2,新竹縣市:3,新竹縣:4,新竹市:5,台中市:6,台南市:7,高雄市:8};
 $("tdates").innerHTML=`<div><small>開賣（業務銷售期）</small><b>${fd(oS)} ～ ${fd(oE)}</b></div><div><small>版位走期</small><b>${fd(w0)} ～ ${fd(w1)}</b></div><div class="nx"><small>下一次討論</small><b>${fd(nextD)}</b></div>`;
